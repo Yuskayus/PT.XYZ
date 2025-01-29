@@ -1,3 +1,4 @@
+// internal/service/konsumen_service.go
 package service
 
 import (
@@ -9,10 +10,12 @@ type KonsumenService struct {
 	Repo *repository.KonsumenRepository
 }
 
+// GetAll - Mendapatkan semua data konsumen
 func (s *KonsumenService) GetAll() ([]domain.Konsumen, error) {
 	return s.Repo.GetAll()
 }
 
-func (s *KonsumenService) Create(input domain.Konsumen) error {
-	return s.Repo.Create(input)
+// Create - Menyimpan konsumen baru
+func (s *KonsumenService) Create(konsumen domain.Konsumen) error {
+	return s.Repo.Create(konsumen)
 }

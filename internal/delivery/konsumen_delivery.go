@@ -1,3 +1,4 @@
+// internal/delivery/konsumen_handler.go
 package delivery
 
 import (
@@ -12,6 +13,7 @@ type KonsumenHandler struct {
 	Service *service.KonsumenService
 }
 
+// GetAll - Mendapatkan semua data konsumen
 func (h *KonsumenHandler) GetAll(c *gin.Context) {
 	konsumens, err := h.Service.GetAll()
 	if err != nil {
@@ -21,6 +23,7 @@ func (h *KonsumenHandler) GetAll(c *gin.Context) {
 	c.JSON(http.StatusOK, konsumens)
 }
 
+// Create - Membuat data konsumen baru
 func (h *KonsumenHandler) Create(c *gin.Context) {
 	var input domain.Konsumen
 	if err := c.ShouldBindJSON(&input); err != nil {
@@ -28,7 +31,7 @@ func (h *KonsumenHandler) Create(c *gin.Context) {
 		return
 	}
 
-	// Validasi tambahan, jika perlu
+	// Validasi tambahan
 	if input.NIK == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "NIK is required"})
 		return
