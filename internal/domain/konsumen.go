@@ -1,5 +1,7 @@
 package domain
 
+import "time"
+
 // Struktur Konsumen untuk menyimpan data konsumen
 type Konsumen struct {
 	ID           uint   `gorm:"primaryKey"`
@@ -11,6 +13,18 @@ type Konsumen struct {
 	Gaji         float64
 	FotoKTP      string
 	FotoSelfie   string
+	LoanLimit    float64 `gorm:"default:0"` // Limit pinjaman konsumen
+
+}
+
+// Struktur Loan untuk menyimpan data pengajuan pinjaman
+type Loan struct {
+	ID             uint      `gorm:"primaryKey"`
+	KonsumenID     uint      `gorm:"not null"`
+	Amount         float64   `gorm:"not null"`
+	Limit          float64   `gorm:"not null"`
+	Status         string    `gorm:"default:'pending'"`
+	SubmissionDate time.Time `gorm:"not null"`
 }
 
 // Struktur User untuk menyimpan data pengguna

@@ -54,10 +54,18 @@ func main() {
 		log.Fatalf("Failed to migrate database: %v", err)
 	}
 
+	// Migrasi model Customer dan Loan
+	db.AutoMigrate(&domain.Konsumen{}, &domain.Loan{})
+
+	// Initialize LoanHandler
+
+	// Route untuk mengajukan pinjaman
+
 	// Dependency injection untuk Konsumen
 	konsumenRepo := &repository.KonsumenRepository{DB: db}
 	konsumenService := &service.KonsumenService{Repo: konsumenRepo}
 	konsumenHandler := &delivery.KonsumenHandler{Service: konsumenService}
+	loanHandler := &handler.LoanHandler{DB: db}
 
 	// Dependency injection untuk AuthHandler
 	authHandler := &handler.AuthHandler{DB: db}
@@ -68,6 +76,7 @@ func main() {
 	// Route setup
 	r.GET("/konsumen", konsumenHandler.GetAll)
 	r.POST("/konsumen", konsumenHandler.Create)
+	r.POST("/apply-loan", loanHandler.ApplyLoan)
 
 	// Endpoint untuk login
 	r.POST("/login", authHandler.Login)

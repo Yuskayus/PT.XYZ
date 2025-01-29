@@ -5,12 +5,64 @@ import (
 	"net/http"
 	"strings"
 
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/yuskayus/pt-xyz-multifinance/internal/auth"
 	"github.com/yuskayus/pt-xyz-multifinance/internal/domain"
 	"golang.org/x/crypto/bcrypt" // Untuk bcrypt
 	"gorm.io/gorm"
 )
+
+type LoanHandler struct {
+	DB *gorm.DB
+}
+
+type LoanInput struct {
+	KonsumenID uint    `json:"konsumen_id"`
+	Amount     float64 `json:"amount"`
+}
+
+// Endpoint untuk mengajukan pinjaman
+func (h *LoanHandler) ApplyLoan(c *gin.Context) {
+	var input LoanInput
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid input"})
+		return
+	}
+
+	// Cek apakah customer (Konsumen) ada
+	var konsumen domain.Konsumen
+	if err := h.DB.First(&konsumen, input.KonsumenID).Error; err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "Customer not found"})
+		return
+	}
+
+	// Cek apakah jumlah pengajuan lebih besar dari limit pinjaman
+	if input.Amount > konsumen.LoanLimit {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Loan amount exceeds the limit"})
+		return
+	}
+
+	// Membuat pengajuan pinjaman
+	loan := domain.Loan{
+		KonsumenID:     input.KonsumenID,
+		Amount:         input.Amount,
+		Limit:          konsumen.LoanLimit,
+		Status:         "pending", // Status awal adalah pending
+		SubmissionDate: time.Now(),
+	}
+
+	if err := h.DB.Create(&loan).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to apply for loan"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Loan application submitted successfully",
+		"loan_id": loan.ID,
+	})
+}
 
 type AuthHandler struct {
 	DB *gorm.DB
