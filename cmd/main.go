@@ -77,6 +77,7 @@ func main() {
 	r.GET("/konsumen", konsumenHandler.GetAll)
 	r.POST("/konsumen", konsumenHandler.Create)
 	r.POST("/apply-loan", loanHandler.ApplyLoan)
+	r.POST("/transaction", konsumenHandler.ProcessTransaction)
 
 	// Endpoint untuk login
 	r.POST("/login", authHandler.Login)

@@ -13,8 +13,11 @@ type Konsumen struct {
 	Gaji         float64
 	FotoKTP      string
 	FotoSelfie   string
-	LoanLimit    float64 `gorm:"default:0"` // Limit pinjaman konsumen
-
+	LoanLimit    float64 `gorm:"default:0"` // Total limit pinjaman konsumen
+	Limit1       float64 `gorm:"default:0"` // Limit untuk tenor 1 bulan
+	Limit2       float64 `gorm:"default:0"` // Limit untuk tenor 2 bulan
+	Limit3       float64 `gorm:"default:0"` // Limit untuk tenor 3 bulan
+	Limit6       float64 `gorm:"default:0"` // Limit untuk tenor 6 bulan
 }
 
 // Struktur Loan untuk menyimpan data pengajuan pinjaman
